@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    user: "1000:50"
+    image: mysql:latest
+    volumes:
+      - ./data/db:/var/lib/blogDB/data
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: blogDB
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    container_name: mysql_db
+  app:
+    build: .
+    volumes:
+      - .:/django
+    ports:
+      - 8000:8000
+    image: app:django
+    container_name: django_container
+    command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; python manage.py runserver 0.0.0.0:8000'
+    depends_on:
+      - db

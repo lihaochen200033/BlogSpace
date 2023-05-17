@@ -1,0 +1,7 @@
+wheel
+Django
+graphene-django
+django-graphql-jwt
+mysqlclient
+python-dotenv
+djangorestframework-simplejwt
