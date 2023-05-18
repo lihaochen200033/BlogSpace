@@ -31,6 +31,7 @@ const Login = (params) => {
           password: formState.password
         },
         onCompleted: (data) => {
+            console.log(data);
             if (data.tokenAuth.success) {
                 setInfoInvalid(false);
                 params.setLoggedIn(true);
@@ -99,9 +100,6 @@ const Login = (params) => {
             Submit
           </div>
         </div>
-        <p className="forgot-password text-right">
-          Forgot <a href="#">password?</a>
-        </p>
       </form>
     )
 }

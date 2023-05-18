@@ -1,43 +1,40 @@
 import React, { Component, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import { AUTH_TOKEN } from '../constants';
+import { useLazyQuery } from '@apollo/client';
 
-const LOGIN_MUTATION = gql`
-  mutation LoginMutation(
-    $email: String!
-    $password: String!
-  ) {
-    tokenAuth(email: $email, password: $password) {
-        success
-        token
-        refreshToken
+const GET_USER = gql`
+    query {
+        userDetails {
+            id
+            email
+        }
     }
-  }
 `;
 
 const Homepage = (params) => {
-    const navigate = useNavigate();
-    const [formState, setFormState] = useState({
-        email: '',
-        password: '',
-    });
+    const token = localStorage.getItem(AUTH_TOKEN);
+    console.log(token);
 
-    const [login, {data, error, loading}] = useMutation(LOGIN_MUTATION, {
-        variables: {
-          email: formState.email,
-          password: formState.password
+    const { loading, error, data, refetch} = useQuery(GET_USER, {
+        context: {
+            headers: {
+                "authorization": "JWT " + token,
+            }
         },
-        onCompleted: (data) => {
-            console.log(data);
-            localStorage.setItem(AUTH_TOKEN, data.tokenAuth.token);
-            navigate('/');
-            console.log(localStorage.getItem(AUTH_TOKEN));
-        }
-    });
+        fetchPolicy: "no-cache" 
+    })
+
+    console.log(data);
+    const userId = data?.userDetails?.id;
 
     return (
-        <h3>Homepage</h3>
+        <div>
+            <h3>Homepage</h3>
+            <h3>{userId}</h3>
+        </div>
+        
     )
 }
 

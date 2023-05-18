@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
+import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Login from './components/login.component'
 import SignUp from './components/signup.component'
@@ -9,10 +10,12 @@ import { AUTH_TOKEN } from './constants';
 
 function App() {
   const [LoggedIn, setLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const handle_logout = () => {
     localStorage.removeItem(AUTH_TOKEN);
     setLoggedIn(false);
+    navigate('/sign-in');
   };
 
   return (
@@ -49,7 +52,7 @@ function App() {
             <Route exact path="/" Component={(routeProps)=><Login {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
             <Route path="/sign-in" Component={(routeProps)=><Login {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
             <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/homepage" element={<Homepage />} />
+            <Route path="/homepage" Component={(routeProps)=><Homepage {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
           </Routes>
         </div>
       </div>
