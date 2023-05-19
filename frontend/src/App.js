@@ -1,12 +1,21 @@
-import React, { Component, useState } from 'react'
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
-import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import Login from './components/login.component'
-import SignUp from './components/signup.component'
-import Homepage from './components/homepage'
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from "./pages/Home";
+import CreatePost from "./pages/AddPost/CreatePost";
+import Post from "./pages/ViewPost/Post";
+import CreateEditor from "./pages/AddPost/CreateEditor";
+import Login from "./pages/Users/Login";
+import Register from "./pages/Users/Register";
+import { useState, useEffect } from "react";
+import PageNotFound from "./pages/PageNotFound";
+import Profile from "./pages/Users/Profile";
+import LikedPosts from "./pages/ViewPost/LikedPosts";
+import Details from "./pages/Users/Details";
+import MarkdownEditor from "./pages/AddPost/CreateMarkdown";
+import EditPost from "./pages/EditPost/EditPost";
+import ChangePassword from "./pages/Users/ChangePassword";
 import { AUTH_TOKEN } from './constants';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   const [LoggedIn, setLoggedIn] = useState(false);
@@ -15,48 +24,29 @@ function App() {
   const handle_logout = () => {
     localStorage.removeItem(AUTH_TOKEN);
     setLoggedIn(false);
-    navigate('/sign-in');
+    navigate('/login');
   };
-
+  
   return (
     <div className="App">
-      <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-        <div className="container">
-          <Link className="navbar-brand" to={'/sign-in'}>
-            BlogSpace
-          </Link>
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul className="navbar-nav ml-auto">
-              {!LoggedIn && (<li className="nav-item">
-                <Link className="nav-link" to={'/sign-in'}>
-                  Login
-                </Link>
-              </li>)}
-              {!LoggedIn && (<li className="nav-item">
-                <Link className="nav-link" to={'/sign-up'}>
-                  Sign up
-                </Link>
-              </li>)}
-              {LoggedIn && (<li className="nav-item">
-                <Link className="nav-link" to={'/sign-in'} onClick={handle_logout}>
-                  Logout
-                </Link>
-              </li>)}
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <div className="auth-wrapper">
-        <div className="auth-inner">
           <Routes>
-            <Route exact path="/" Component={(routeProps)=><Login {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
-            <Route path="/sign-in" Component={(routeProps)=><Login {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/homepage" Component={(routeProps)=><Homepage {...routeProps} LoggedIn={LoggedIn} setLoggedIn={setLoggedIn}/>} />
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/createpost" element={<CreatePost />} />
+            <Route path="/post/:id" element={<Post />} />
+            <Route path="/createposteditor" element={<CreateEditor />} />
+            <Route path="/markdown" element={<MarkdownEditor />} />
+            <Route path="/edit/:id" element={<EditPost />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/details" element={<Details />} />
+            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/changepwd" element={<ChangePassword />} />
+            <Route path="/liked" element={<LikedPosts />} />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
-        </div>
-      </div>
     </div>
   )
 }
-export default App
+
+export default App;

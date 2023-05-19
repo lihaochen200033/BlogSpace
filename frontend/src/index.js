@@ -25,8 +25,8 @@ root.render(
   <BrowserRouter>
     <ApolloProvider client={client}>
       <App />
-    </ApolloProvider>,
-  </BrowserRouter>,
+    </ApolloProvider>
+  </BrowserRouter>
 );
 
 reportWebVitals();

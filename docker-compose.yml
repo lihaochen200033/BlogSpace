@@ -12,6 +12,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     container_name: mysql_db
+    mem_limit: 1G
   app:
     build: .
     volumes:
@@ -23,6 +24,7 @@ services:
     command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; python manage.py runserver 0.0.0.0:8000'
     depends_on:
       - db
+    mem_limit: 1G
   web:
     build: ./frontend
     ports:
@@ -30,3 +32,4 @@ services:
     volumes:
       - ./frontend:/frontend
     container_name: react_frontend
+    mem_limit: 1G
