@@ -20,6 +20,7 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     user_details = graphene.Field(UserType)
 
     def resolve_user_details(root, info, **kwargs):
+        # check authentication
         user = info.context.user
         if not user.is_authenticated:
             raise Exception("Authentication credentials were not provided")

@@ -1,66 +1,62 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
-import { useEffect, useContext } from 'react';
-import { AuthContext } from "../../Helpers/AuthContext";
+import { useEffect, useState, useContext } from 'react';
 import Navbar from '../../components/Navbar';
 import ReactHtmlParser from 'html-react-parser';
-
-const Quill = ReactQuill.Quill;
-let Font = Quill.import("formats/font");
-Font.whitelist = ["Roboto", "Raleway", "Montserrat", "Lato", "Rubik", "Sans-Serif", "Times New Roman"];
-Quill.register(Font, true);
-
-const modules = {
-    toolbar: [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        [{ font: Font.whitelist }],
-        ["bold", "italic", "underline", "strike", "blockquote"],
-        [
-            { list: "ordered" },
-            { list: "bullet" },
-        ]
-    ]
-};
-
-const formats = [
-    "header", "font", "bold", "italic", "underline", "strike", "blockquote", "background", "code", "script", "list",
-    "bullet", "indent", "link", "image", "video",
-];
+import { useMutation, useQuery } from '@apollo/client';
+import { AUTH_TOKEN } from '../../constants';
+import { GET_USER, CREATE_POST_MUTATION } from "../../Helpers/api"
 
 function CreatePost() {
-    const { authStatus } = useContext(AuthContext);
-    const Navigate = useNavigate();
-
+    const token = localStorage.getItem(AUTH_TOKEN);
+    console.log(token);
     useEffect(() => {
-        if (!authStatus.status) {
+        if (!token) {
             alert("User not logged In!");
-            Navigate("/login");
+            navigate("/login");
         }
-    }, []);
+    }, [])
+    const navigate = useNavigate();
 
     const initialValues = {
         title: "",
-        postText: "",
-        UserId: 0,
-        username: ""
+        content: "",
     };
 
-    const validationSchema = Yup.object().shape({
-        title: Yup.string().min(3).max(250).required(),
-        postText: Yup.string().min(10).required()
+    const { data: userData } = useQuery(GET_USER, {
+        context: {
+            headers: {
+                "authorization": "JWT " + token,
+            }
+        },
+        fetchPolicy: "no-cache"
     })
 
+    const userId = userData?.userDetails?.id;
+    console.log(userId);
+
+    const [ createPost ] = useMutation(CREATE_POST_MUTATION, {
+        context: {
+            headers: {
+                "authorization": "JWT " + token,
+            }
+        },
+        fetchPolicy: "no-cache",
+    });
+
     const onSubmit = (data) => {
-        data.UserId = authStatus.id;
-        data.username = authStatus.username;
-        axios.post("http://localhost:3001/posts", data, { headers: { accessToken: sessionStorage.getItem("accessToken") } }).then((response) => {
-            console.log(data);
-            Navigate("/home");
-        }
-        );
+        console.log(data);
+        createPost({ 
+            variables: {
+                author: userId,
+                content: data.content,
+                title: data.title,
+            },
+            onCompleted: (data) => {
+                navigate("/home");
+            },
+        })
     }
 
     return (
@@ -68,22 +64,15 @@ function CreatePost() {
             <Navbar />
             <h1 className='title'>Post your thoughts!</h1>
 
-            <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+            <Formik initialValues={initialValues} onSubmit={onSubmit}>
                 <Form className='formContainer'>
-                    <label>Title : </label>
-                    <Field id="inputCreatePost" name="title" placeholder="Books" />
+                <label>Title : </label>
+                    <Field id="inputUpdatePostTitle" name="title" placeholder="Enter post title" />
                     <ErrorMessage name="title" component="div" />
 
                     <label>Post : </label>
-                    <Field as="textarea" id="TextCreatePost" name="postText" placeholder="">
-                        {({ field }) => 
-                                <div className='textedit'>
-                                    <ReactQuill theme='snow' value={field.value} onChange={field.onChange(field.name)} modules={modules} formats={formats} />
-                                    <div className='preview'>{ReactHtmlParser(field.value)}</div>
-                                </div>
-                        }
-                    </Field>
-                    <ErrorMessage name="postText" component="div" />
+                    <Field id="inputUpdatePostContent" name="content" placeholder="Enter post content" />
+                    <ErrorMessage name="content" component="div" />
 
                     <button type='submit' className='createPost'>Create Post</button>
                 </Form>
