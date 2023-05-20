@@ -1,16 +1,13 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import ReactHtmlParser from 'html-react-parser';
 import { useMutation, useQuery } from '@apollo/client';
 import { AUTH_TOKEN } from '../../constants';
-import { GET_USER, CREATE_POST_MUTATION } from "../../Helpers/api"
+import { GET_USER, CREATE_POST_MUTATION } from "../../Helpers/graphql"
 
 function CreatePost() {
     const token = localStorage.getItem(AUTH_TOKEN);
-    console.log(token);
     useEffect(() => {
         if (!token) {
             alert("User not logged In!");
@@ -34,7 +31,6 @@ function CreatePost() {
     })
 
     const userId = userData?.userDetails?.id;
-    console.log(userId);
 
     const [ createPost ] = useMutation(CREATE_POST_MUTATION, {
         context: {
@@ -46,7 +42,6 @@ function CreatePost() {
     });
 
     const onSubmit = (data) => {
-        console.log(data);
         createPost({ 
             variables: {
                 author: userId,

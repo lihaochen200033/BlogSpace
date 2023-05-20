@@ -1,108 +1,20 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { useMutation, useQuery, gql } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { AUTH_TOKEN } from '../../constants';
 import { BsFillTrashFill } from 'react-icons/bs';
 import { IconContext } from "react-icons";
-
-const GET_COMMENTS_QUERY = gql`
-  query GET_COMMENTS_QUERY(
-    $postId: ID!
-  ) {
-    commentByPostId(
-        postId: $postId
-    ) {
-        id
-        content
-        author {
-            id
-            username
-        }
-    }
-  }
-`;
-
-const GET_POST_QUERY = gql`
-  query GET_POST_QUERY(
-    $postId: ID!
-  ) {
-    postById(
-        postId: $postId
-    ) {
-        id
-        title
-        content
-        author {
-            id
-            username
-        }
-        createdOn
-        updatedOn
-    }
-  }
-`;
-
-const GET_USER = gql`
-    query {
-        userDetails {
-            id
-            username
-        }
-    }
-`;
-
-const CREATE_COMMENT_MUTATION = gql`
-  mutation CreateCommentMutation(
-    $author: ID!
-    $content: String!
-    $post: ID!
-  ) {
-    createComment(
-        author: $author
-        content: $content
-        post: $post
-    ) {
-        comment {
-            id
-            content
-            author {
-              id
-              username
-            }
-        }
-    }
-  }
-`;
-
-const DELETE_COMMENT_MUTATION = gql`
-  mutation DeleteCommentMutation(
-    $id: ID!
-  ) {
-    deleteComment(id: $id) {
-        comment {
-            id
-            content
-        }
-    }
-  }
-`;
-
-const DELETE_POST_MUTATION = gql`
-  mutation DeletePostMutation(
-    $id: ID!
-  ) {
-    deletePost(id: $id) {
-        post{
-            id
-        }
-    }
-  }
-`;
+import { GET_COMMENTS_QUERY, 
+         GET_POST_QUERY,
+         GET_USER, 
+         CREATE_COMMENT_MUTATION, 
+         DELETE_COMMENT_MUTATION,
+         DELETE_POST_MUTATION,
+        } from "../../Helpers/graphql"
 
 function Post() {
     const token = localStorage.getItem(AUTH_TOKEN);
-    console.log(token);
     useEffect(() => {
         if (!token) {
             alert("User not logged In!");
@@ -124,7 +36,6 @@ function Post() {
         fetchPolicy: "no-cache"
     })
     
-    console.log(userData);
     const userId = userData?.userDetails?.id;
 
     const { data: commentsData } = useQuery(GET_COMMENTS_QUERY, {
@@ -151,7 +62,6 @@ function Post() {
         fetchPolicy: "no-cache",
     })
 
-    console.log(postData);
 
     useEffect(()=>{
         if (commentsData?.commentByPostId) {
@@ -162,8 +72,6 @@ function Post() {
         }
     }, [commentsData, postData])
 
-    console.log(commentObject);
-    console.log(postObject);
 
     const [ createComment ] = useMutation(CREATE_COMMENT_MUTATION, {
         context: {
@@ -183,9 +91,6 @@ function Post() {
                 post: id
             },
             onCompleted: (data) => {
-                console.log("here")
-                console.log(data);
-                console.log("here")
                 const newComment = {
                     content: data.createComment.comment.content,
                     author: {
@@ -244,9 +149,6 @@ function Post() {
     const EditPost = (Id) => {
         navigate(`/edit/${Id}`);
     }
-
-    console.log(userId);
-    console.log(commentObject);
 
     return (
         <div className='PostPage'>

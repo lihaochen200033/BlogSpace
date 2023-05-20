@@ -1,52 +1,13 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactQuill from 'react-quill';
 import Navbar from '../../components/Navbar';
-import { useMutation, useQuery, gql } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { AUTH_TOKEN } from '../../constants';
-
-const GET_POST_QUERY = gql`
-  query GET_POST_QUERY(
-    $postId: ID!
-  ) {
-    postById(
-        postId: $postId
-    ) {
-        id
-        title
-        content
-        author {
-            id
-            username
-        }
-        createdOn
-        updatedOn
-    }
-  }
-`;
-
-const UPDATE_POST_MUTATION = gql`
-  mutation UpdatePostMutation(
-    $id: ID!
-    $title: String
-    $content: String
-  ) {
-    updatePost(
-        id: $id
-        title: $title
-        content: $content
-    ) {
-        post{
-            id
-        }
-    }
-  }
-`;
+import { GET_POST_QUERY, UPDATE_POST_MUTATION } from "../../Helpers/graphql"
 
 function EditPost() {
     const token = localStorage.getItem(AUTH_TOKEN);
-    console.log(token);
     useEffect(() => {
         if (!token) {
             alert("User not logged In!");
@@ -69,8 +30,6 @@ function EditPost() {
         fetchPolicy: "no-cache",
     })
 
-    console.log(postData);
-
     useEffect(()=>{
         if (postData?.postById) {
             setPostObject(postData.postById)
@@ -92,7 +51,6 @@ function EditPost() {
     });
 
     const onSubmit = (data) => {
-        console.log(data);
         updatePost({ 
             variables: {
                 id: id,

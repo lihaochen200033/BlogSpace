@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AUTH_TOKEN } from '../constants';
 
 function Navbar() {
     const token = localStorage.getItem(AUTH_TOKEN);
-    console.log(token);
-
     const Navigate = useNavigate();
 
     const Clear = () => {

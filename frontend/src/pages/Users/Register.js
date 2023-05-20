@@ -1,29 +1,11 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import RegisterImg from "../../Images/Register.webp";
 import { Link, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react'
-import { useMutation, gql } from '@apollo/client';
+import React from 'react'
+import { useMutation } from '@apollo/client';
 import { AUTH_TOKEN } from '../../constants';
 import Navbar from "../../components/Navbar";
-
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
-    $email: String!
-    $username: String!
-    $password: String!
-  ) {
-    register(
-        email: $email
-        username: $username
-        password1: $password
-        password2: $password
-    ) {
-        success
-        token
-        refreshToken
-    }
-  }
-`;
+import { SIGNUP_MUTATION } from "../../Helpers/graphql"
 
 function Register() {
     const navigate = useNavigate();
@@ -33,7 +15,7 @@ function Register() {
         email: ""
     };
     
-    const [signup, {data, error, loading}] = useMutation(SIGNUP_MUTATION, {
+    const [signup] = useMutation(SIGNUP_MUTATION, {
         onCompleted: (data) => {
             if (data.register.success) {
                 localStorage.setItem(AUTH_TOKEN, data.register.token);

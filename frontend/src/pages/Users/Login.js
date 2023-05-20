@@ -1,22 +1,11 @@
 import LoginImg from "../../Images/Login.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import React, { Component, useState } from 'react'
-import { useMutation, gql } from '@apollo/client';
+import React, { useState } from 'react'
+import { useMutation } from '@apollo/client';
 import { AUTH_TOKEN } from '../../constants';
 import Navbar from "../../components/Navbar";
+import { LOGIN_MUTATION } from "../../Helpers/graphql"
 
-const LOGIN_MUTATION = gql`
-  mutation LoginMutation(
-    $email: String!
-    $password: String!
-  ) {
-    tokenAuth(email: $email, password: $password) {
-        success
-        token
-        refreshToken
-    }
-  }
-`;
 
 function Login() {
     const navigate = useNavigate();
@@ -26,7 +15,7 @@ function Login() {
     });
 
 
-    const [login, {data, error, loading}] = useMutation(LOGIN_MUTATION, {
+    const [login] = useMutation(LOGIN_MUTATION, {
         variables: {
           email: formState.email,
           password: formState.password
