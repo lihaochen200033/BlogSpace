@@ -94,7 +94,10 @@ DATABASES = {
         'USER': 'user',  
         'PASSWORD': 'password',  
         'HOST': 'db',  
-        'PORT': '3306',  
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_blogDB',
+        },
     }  
 }
 
