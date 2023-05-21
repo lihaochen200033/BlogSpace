@@ -21,7 +21,7 @@ services:
       - 8000:8000
     image: app:django
     container_name: django_container
-    command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; python manage.py test; python manage.py runserver 0.0.0.0:8000; python manage.py setup_test_data;'
+    command: bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; python manage.py test; python manage.py setup_test_data; python manage.py runserver 0.0.0.0:8000;'
     depends_on:
       - db
     mem_limit: 1G
