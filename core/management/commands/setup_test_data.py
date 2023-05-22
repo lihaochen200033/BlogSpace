@@ -16,7 +16,7 @@ from users.factories import (
 
 NUM_USERS = 5
 NUM_POSTS = 100
-COMMENTS_PER_THREAD = [1, 2, 3]
+COMMENTS_PER_THREAD = [0, 1, 2, 3]
 
 class Command(BaseCommand):
     help = "Generates test data"
